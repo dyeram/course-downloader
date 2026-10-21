@@ -43,6 +43,8 @@ def get_pdf_links(html, base_url):
         if not allowed(url) or not urlparse(url).path.lower().endswith(".pdf"):
             continue
         label = anchor.get_text(" ", strip=True)
+        if not label:
+            continue
         parent = anchor.find_parent("tr")
         context = parent.get_text(" ", strip=True) if parent else label
         found.append((url, label, context))

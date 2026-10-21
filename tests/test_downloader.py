@@ -59,6 +59,26 @@ class TestDownloader(unittest.TestCase):
                 result = file_type(base + path, "", "")
                 self.assertEqual(result, expected)
 
+    def test_get_pdf_links_skips_empty_labels(self):
+        html = """
+        <html>
+            <body>
+                <a href="/~adamodar/pdfiles/acf4E/webcastslides/session1.pdf"></a>
+                <a href="/~adamodar/pdfiles/valonlineslides/session1.pdf">Slides</a>
+            </body>
+        </html>
+        """
+
+        base_url = "https://www.stern.nyu.edu/~adamodar/New_Home_Page/webcastvalonline.htm"
+
+        links = get_pdf_links(html, base_url)
+
+        self.assertEqual(len(links), 1)
+        self.assertEqual(
+            links[0][0],
+            "https://www.stern.nyu.edu/~adamodar/pdfiles/valonlineslides/session1.pdf",
+        )
+        self.assertEqual(links[0][1], "Slides")
 
 if __name__ == "__main__":
     unittest.main()
