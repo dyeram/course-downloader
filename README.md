@@ -1,7 +1,7 @@
 
 # Damodaran Online Course Materials Downloader
 
-A simple Python script to download and organise PDF teaching materials from Prof. Aswath Damodaran's [online classes](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/onlineclass.htm)
+A simple Python script to download and organise PDF teaching materials from Prof. Aswath Damodaran's [online classes](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/onlineclass.htm) at NYU Stern School of Business.
 
 ## Supported Courses
 
