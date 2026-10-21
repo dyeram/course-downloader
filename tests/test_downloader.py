@@ -1,12 +1,6 @@
-
 import unittest
 
-from download_damodaran import (
-    allowed,
-    get_pdf_links,
-    session_number,
-    file_type,
-)
+from download_damodaran import allowed, get_pdf_links, file_type
 
 
 class TestDownloader(unittest.TestCase):
@@ -14,6 +8,9 @@ class TestDownloader(unittest.TestCase):
     def test_allowed_urls(self):
         self.assertTrue(
             allowed("https://pages.stern.nyu.edu/course.pdf")
+        )
+        self.assertTrue(
+            allowed("https://www.stern.nyu.edu/course.pdf")
         )
         self.assertFalse(
             allowed("https://example.com/course.pdf")
@@ -24,54 +21,42 @@ class TestDownloader(unittest.TestCase):
 
     def test_pdf_link_extraction(self):
         html = """
-        <a href="session5slides.pdf">Lecture slides</a>
-        <a href="session5test.pdf">Post-class test</a>
-        <a href="video.mp4">Watch video</a>
+        <a href="/~adamodar/pdfiles/valonlineslides/session1.pdf">
+            Slides
+        </a>
+        <a href="/~adamodar/pdfiles/valonlinetests/session1.pdf">
+            Post-class test & solution
+        </a>
+        <a href="https://youtu.be/example">Watch video</a>
         """
 
         links = get_pdf_links(
             html,
-            "https://pages.stern.nyu.edu/course/",
+            "https://www.stern.nyu.edu/course/",
         )
 
         self.assertEqual(len(links), 2)
-        self.assertTrue(links[0][0].endswith("session5slides.pdf"))
-        self.assertTrue(links[1][0].endswith("session5test.pdf"))
 
-    def test_session_identification(self):
-        url = "https://pages.stern.nyu.edu/session5test.pdf"
-
-        self.assertEqual(
-            session_number(url, "Test", "Session 5"),
-            5,
+        self.assertTrue(
+            links[0][0].endswith("valonlineslides/session1.pdf")
         )
-        self.assertEqual(
-            session_number(url, "Test", "Session 8"),
-            5,
-        )
-        self.assertIsNone(
-            session_number(
-                "https://pages.stern.nyu.edu/test.pdf",
-                "Test",
-                "No session information",
-            )
+        self.assertTrue(
+            links[1][0].endswith("valonlinetests/session1.pdf")
         )
 
     def test_file_classification(self):
-        base = "https://pages.stern.nyu.edu/"
+        base = "https://www.stern.nyu.edu/~adamodar/pdfiles/"
 
         cases = {
-            "session5slides.pdf": "slides",
-            "session5test.pdf": "postclass_test",
-            "session5solutions.pdf": "solutions",
-            "session5reading.pdf": "other",
+            "valonlineslides/session1.pdf": "slides",
+            "valonlinetests/session1.pdf": "postclass",
+            "Accounting101/postclass/session1.pdf": "postclass",
+            "valuationtools/problem1.pdf": "miscellaneous",
         }
 
-        for filename, expected in cases.items():
-            with self.subTest(filename=filename):
-                result = file_type(
-                    base + filename, filename, ""
-                )
+        for path, expected in cases.items():
+            with self.subTest(path=path):
+                result = file_type(base + path, "", "")
                 self.assertEqual(result, expected)
 
 
