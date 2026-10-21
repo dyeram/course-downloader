@@ -1,0 +1,11 @@
+[project]
+name = "course-downloader"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.15.0",
+    "requests>=2.34.2",
+]
+
+[dependency-groups]
+dev = []
