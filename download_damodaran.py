@@ -17,6 +17,7 @@ COURSE_KEYS = {
     "accounting": "ACCOUNTING_URL",
     "foundations": "FOUNDATIONS_URL",
     "valuation": "VALUATION_URL",
+    "corporate_finance": "CORPORATE_FINANCE_URL",
 }
 
 ALLOWED_HOSTS = {
@@ -58,7 +59,7 @@ def file_type(url, label, context):
         return "slides"
     if "postclass" in path or "tests" in path:
         return "postclass"
-    return "miscellaneous"
+    return "supplementary"
 
 
 def download(session, url, dest):
@@ -141,9 +142,6 @@ def main():
                 seen.add(url)
 
                 folder = file_type(url, label, context)
-
-                if course == "valuation" and folder == "miscellaneous":
-                    folder = "valuation-tools"
 
                 basename = Path(unquote(urlparse(url).path)).name
                 basename = re.sub(
