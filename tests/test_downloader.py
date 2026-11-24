@@ -51,7 +51,7 @@ class TestDownloader(unittest.TestCase):
             "valonlineslides/session1.pdf": "slides",
             "valonlinetests/session1.pdf": "postclass",
             "Accounting101/postclass/session1.pdf": "postclass",
-            "valuationtools/problem1.pdf": "miscellaneous",
+            "valuationtools/problem1.pdf": "supplementary",
         }
 
         for path, expected in cases.items():
