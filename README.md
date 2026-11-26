@@ -39,13 +39,20 @@ Comment out the course URLs you do not wish to download.
 | `./run_downloader.sh test` | Run unit and integration tests |
 | `./run_downloader.sh dry-run` | Preview downloads |
 | `./run_downloader.sh download` | Download PDFs |
-| `./run_downloader.sh all` | Test, preview and confirm downloads |
+| `./run_downloader.sh convert` | Convert PDFs to Markdown and aggregate transcripts |
+| `./run_downloader.sh all` | Test, preview and confirm downloads and conversion |
 
 ## Output
 
 PDFs are organised by course into `slides/`, `postclass/` and `supplementary/` directories.
 
-Existing files are skipped. Results are recorded in `download_report.csv`, which is overwritten on each download run.
+Existing PDFs are skipped. Results are recorded in `download_report.csv`, which is overwritten on each download run.
+
+Lecture slides and post-class tests and solutions are converted into separate aggregated Markdown files using [PyMuPDF](https://github.com/pymupdf).
+
+Individual Markdown transcripts can be manually added to the `slides/transcript/` directory of each course and aggregated using the conversion command.
+
+Files are aggregated in natural filename order. Existing aggregated Markdown files are overwritten oneach conversion run. Original PDFs and individual transcripts are preserved.
 
 ## Tests
 
@@ -55,6 +62,8 @@ Tests use Python's built-in `unittest` framework, mocked HTTP responses and temp
 
 - Only directly linked PDFs are downloaded.
 - Videos, transcripts and spreadsheets are currently not supported.
+- PDF conversion is limited to embedded text and may produce formatting or character encoding errors.
+- Supplementary PDFs are not automatically converted.
 - Filename collisions are not automatically resolved.
 - Existing files are not validated.
 - Changes to the course webpages may affect functionality.
