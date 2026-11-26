@@ -17,6 +17,10 @@ download() {
     uv run --env-file .env download_damodaran.py
 }
 
+convert() {
+    uv run --env-file .env convert_materials.py
+}
+
 case "${1:-}" in
     test)
         run_tests
@@ -27,18 +31,24 @@ case "${1:-}" in
     download)
         download
         ;;
+    convert)
+        convert
+        ;;
     all)
         run_tests
         dry_run
 
-        read -r -p "Proceed with downloads? [y/N] " answer
+        read -r -p "Proceed with downloads and conversion? [y/N] " answer
 
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             download
+            convert
+        else
+            echo "Operation cancelled."
         fi
         ;;
     *)
-        echo "Usage: $0 {test|dry-run|download|all}"
+        echo "Usage: $0 {test|dry-run|download|convert|all}"
         exit 1
         ;;
 esac

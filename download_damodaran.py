@@ -17,7 +17,7 @@ COURSE_KEYS = {
     "accounting": "ACCOUNTING_URL",
     "foundations": "FOUNDATIONS_URL",
     "valuation": "VALUATION_URL",
-    "corporate_finance": "CORPORATE_FINANCE_URL",
+    "corporate-finance": "CORPORATE_FINANCE_URL",
 }
 
 ALLOWED_HOSTS = {
@@ -91,9 +91,7 @@ def main():
     )
     args = parser.parse_args()
 
-    output = Path(
-        os.environ.get("OUTPUT_DIR", "~/Downloads/Finance-Courses")
-    ).expanduser()
+    output = Path(os.environ["OUTPUT_DIR"]).expanduser()
 
     courses = {
         name: os.environ[key]
