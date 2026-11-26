@@ -10,11 +10,11 @@ run_tests() {
 }
 
 dry_run() {
-    uv run --env-file .env download_damodaran.py --dry-run
+    uv run --env-file .env download_pdfs.py --dry-run
 }
 
 download() {
-    uv run --env-file .env download_damodaran.py
+    uv run --env-file .env download_pdfs.py
 }
 
 convert() {

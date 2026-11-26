@@ -1,6 +1,6 @@
 import unittest
 
-from download_damodaran import allowed, get_pdf_links, file_type
+from download_pdfs import allowed, get_pdf_links, file_type
 
 
 class TestDownloader(unittest.TestCase):

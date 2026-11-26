@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import download_damodaran as downloader
+import download_pdfs as downloader
 
 
 class TestDownloaderIntegration(unittest.TestCase):
@@ -62,7 +62,7 @@ class TestDownloaderIntegration(unittest.TestCase):
             with (
                 patch.dict(os.environ, env, clear=True),
                 patch.object(
-                    sys, "argv", ["download_damodaran.py"]
+                    sys, "argv", ["download_pdfs.py"]
                 ),
                 patch.object(
                     downloader.requests, "Session"
