@@ -17,6 +17,14 @@ download() {
     uv run --env-file .env download_pdfs.py
 }
 
+transcripts() {
+    uv run --env-file .env download_transcripts.py
+}
+
+transcripts_dry_run() {
+    uv run --env-file .env download_transcripts.py --dry-run
+}
+
 convert() {
     uv run --env-file .env convert_materials.py
 }
@@ -31,6 +39,12 @@ case "${1:-}" in
     download)
         download
         ;;
+    transcripts)
+        transcripts
+        ;;
+    transcripts-dry-run)
+        transcripts_dry_run
+        ;;
     convert)
         convert
         ;;
@@ -42,13 +56,14 @@ case "${1:-}" in
 
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             download
+            transcripts
             convert
         else
             echo "Operation cancelled."
         fi
         ;;
     *)
-        echo "Usage: $0 {test|dry-run|download|convert|all}"
+        echo "Usage: $0 {test|dry-run|download|transcripts-dry-run|transcripts|convert|all}"
         exit 1
         ;;
 esac
