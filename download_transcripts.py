@@ -14,7 +14,6 @@ from youtube_transcript_api.formatters import TextFormatter
 
 from download_pdfs import COURSE_KEYS
 
-
 def get_video_id(url):
     """Extract a YouTube video ID from a URL."""
     parsed = urlparse(url)
@@ -38,21 +37,48 @@ def get_video_id(url):
     return None
 
 
+def get_session_id(label):
+    label = label.strip().lower()
+
+    if label in ("preview", "intro", "introduction", "0"):
+        return "0"
+
+    match = re.fullmatch(r"(?:session\s+)?(\d+[a-z]?)", label)
+
+    if match:
+        return match.group(1).upper()
+
+    return None
+    
+
 def get_video_links(url):
-    """Extract unique video IDs in webpage order."""
     response = requests.get(url, timeout=30)
     response.raise_for_status()
-
     soup = BeautifulSoup(response.text, "html.parser")
-    video_ids = []
+
+    video_links = []
+    seen = set()
 
     for link in soup.find_all("a", href=True):
         video_id = get_video_id(link["href"])
 
-        if video_id and video_id not in video_ids:
-            video_ids.append(video_id)
+        if not video_id or video_id in seen:
+            continue
 
-    return video_ids
+        row = link.find_parent("tr")
+        first_cell = row.find(["td", "th"]) if row else None
+
+        label = first_cell.get_text(strip=True) if first_cell else ""
+        session = get_session_id(label)
+
+        if session is None:
+            print(f"Warning: Unrecognised session: {label!r}")
+            continue
+
+        video_links.append((session, video_id))
+        seen.add(video_id)
+
+    return video_links
 
 
 def download_transcript(api, video_id):
@@ -89,18 +115,23 @@ def main():
 
         folder = output / course / "slides" / "transcript"
 
-        video_ids = get_video_links(url)
+        video_links = get_video_links(url)
 
-        print(f"\n{course_title}: {len(video_ids)} videos")
+        print(f"\n{course_title}: {len(video_links)} videos")
 
         if not args.dry_run:
             folder.mkdir(parents=True, exist_ok=True)
 
-        for session, video_id in enumerate(video_ids, start=1):
+        for session, video_id in video_links:
             destination = folder / f"session{session}.md"
 
+            heading = (
+                "Introduction" if session == "0"
+                else f"Session {session}"
+            )
+
             if args.dry_run:
-                print(f"{destination.name}: {video_id}")
+                print(f"{destination.name}: {video_id} ({heading})")
                 continue
 
             if has_transcript(destination):
@@ -111,7 +142,7 @@ def main():
                 text = download_transcript(api, video_id)
 
                 destination.write_text(
-                    f"# {course_title}: session {session}\n\n"
+                    f"# {course_title}: {heading}\n\n"
                     f"{text}\n",
                     encoding="utf-8",
                 )

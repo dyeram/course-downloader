@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from download_transcripts import (
     get_video_id,
+    get_session_id,
     get_video_links,
     download_transcript,
     has_transcript,
@@ -38,23 +39,54 @@ class TestTranscriptDownloader(unittest.TestCase):
         url = "https://example.com/watch?v=qofdyX0vudk"
         self.assertIsNone(get_video_id(url))
 
+    def test_get_session_id_numeric(self):
+        self.assertEqual(get_session_id("1"), "1")
+        self.assertEqual(get_session_id("12"), "12")
+
+    def test_get_session_id_alphanumeric(self):
+        self.assertEqual(get_session_id("2A"), "2A")
+        self.assertEqual(get_session_id("2b"), "2B")
+
+    def test_get_session_id_introduction(self):
+        self.assertEqual(get_session_id("Intro"), "0")
+        self.assertEqual(get_session_id("Preview"), "0")
+        self.assertEqual(get_session_id("Introduction"), "0")
+
+    def test_get_session_id_whitespace(self):
+        self.assertEqual(get_session_id(" 2A "), "2A")
+
+    def test_get_session_id_invalid(self):
+        self.assertIsNone(get_session_id("Unknown"))
+        self.assertIsNone(get_session_id(""))
+
     @patch("download_transcripts.requests.get")
     def test_video_links_order_and_duplicates(self, mock_get):
         mock_get.return_value.text = """
-        <html>
-            <a href="https://youtu.be/qofdyX0vudk">Video 1</a>
-            <a href="https://youtu.be/abcdefghijk">Video 2</a>
-            <a href="https://youtu.be/qofdyX0vudk">Duplicate</a>
-            <a href="https://example.com/slides.pdf">PDF</a>
-        </html>
+        <table>
+            <tr>
+                <td>Preview</td>
+                <td><a href="https://youtu.be/abcdefghijk">Video</a></td>
+            </tr>
+            <tr>
+            <td>1</td>
+            <td><a href="https://youtu.be/lmnopqrstuv">Video</a></td>
+            </tr>
+            <tr>
+            <td>2A</td>
+            <td><a href="https://youtu.be/12345678901">Video</a></td>
+            </tr>
+        </table>
         """
 
         result = get_video_links("https://example.com")
 
-        self.assertEqual(
-            result,
-            ["qofdyX0vudk", "abcdefghijk"]
-        )
+        self.assertEqual(result, [
+            ("0", "abcdefghijk"),
+            ("1", "lmnopqrstuv"),
+            ("2A", "12345678901"),
+        ])
+
+        mock_get.assert_called_once()
 
     @patch("download_transcripts.requests.get")
     def test_no_video_links(self, mock_get):
