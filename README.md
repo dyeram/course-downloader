@@ -52,7 +52,7 @@ Existing PDFs are skipped. Results are recorded in `download_report.csv`, which 
 
 Lecture slides and post-class tests and solutions are converted into separate aggregated Markdown files using [PyMuPDF](https://github.com/pymupdf).
 
-YouTube transcripts are automatically downloaded using [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api), saved in webpage order in the `slides/transcript/` directory of each course and aggregated using the conversion command. Existing completed transcripts are skipped.
+YouTube transcripts are automatically downloaded using [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api), saved alongside their respective sessions numbers in the `slides/transcript/` directory of each course and aggregated using the conversion command. Existing completed transcripts are skipped.
 
 Files are aggregated in natural filename order. Existing aggregated Markdown files are overwritten oneach conversion run. Original PDFs and individual transcripts are preserved.
 
@@ -68,9 +68,7 @@ Tests use Python's built-in `unittest` framework, mocked HTTP responses and temp
 - Supplementary PDFs are not automatically converted.
 - Filename collisions are not automatically resolved.
 - YouTube may temporarily block automated transcript requests.
-- Transcript numbering follows webpage video order and may differ from actual lecture session numbers.
 - Changes to the course webpages may affect functionality.
-- Transcript numbering follows webpage video order and may differ from actual lecture session numbers (to be fixed).
 
 ## Disclaimer
 
